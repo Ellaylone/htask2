@@ -1,0 +1,25 @@
+{
+    "name": "htask2",
+    "version": "1.0.0",
+    "description": "htask2",
+    "main": "index.js",
+    "dependencies": {
+        "gulp": "^3.9.1",
+        "gulp-watch": "^4.3.0",
+        "browser-sync": "^2.13.0"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Ellaylone/htask2.git"
+    },
+    "author": "Ellaylone",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Ellaylone/htask2/issues"
+    },
+    "homepage": "https://github.com/Ellaylone/htask2#readme"
+}
