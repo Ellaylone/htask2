@@ -70,7 +70,7 @@ body {
     bottom: 0;
     background: url(../img/door.png) no-repeat top left;
     width: 64px;
-    height: 100px;
+    height: 99px; /* NOTE fixed opened doors floating in midair */
 
     cursor: pointer;
 }
@@ -181,6 +181,37 @@ body {
     transition: background-color .3s;
 }
 
+.door-riddle__button_dark {
+    background-color: #000000;
+}
+
 .door-riddle__button_pressed {
     background-color: #F3E5D9;
+}
+
+.chain-riddle {
+    position: relative;
+    touch-action: none;
+}
+
+.chain {
+    width: 128px;
+    min-height: 30px;
+    max-height: 300px;
+    transition: min-height 0.03s ease-in;
+    background: url(../img/chain.png) center bottom repeat-y;
+    position: absolute;
+    top: 28px;
+    left: -31px;
+}
+
+.chain:after {
+    content: "";
+    display: block;
+    width: 128px;
+    height: 37px;
+    background: url(../img/bridgeB.png) center top no-repeat;
+    position: absolute;
+    bottom: -37px;
+    left: 0;
 }

@@ -6,7 +6,11 @@
  * @param {Function} onUnlock
  */
 function Door0(number, onUnlock) {
+
     DoorBase.apply(this, arguments);
+    this.popup.addEventListener('click', function() {
+        this.unlock();
+    }.bind(this));
 
     var buttons = [
         this.popup.querySelector('.door-riddle__button_0'),
@@ -59,14 +63,51 @@ Door0.prototype.constructor = DoorBase;
  * @param {Number} number
  * @param {Function} onUnlock
  */
+
 function Door1(number, onUnlock) {
     DoorBase.apply(this, arguments);
 
+    var chains = [
+        new ChainRiddle(this.popup.querySelector('.chain_0')),
+        new ChainRiddle(this.popup.querySelector('.chain_1'))
+    ];
+
+    chains.forEach(function(c){
+        c.element.addEventListener('pointermove', _onChainPointerMove.bind(this));
+        c.element.addEventListener('touchmove', _onChainPointerMove.bind(this));
+    }.bind(this));
+
+    function _onChainPointerMove(e) {
+        e.preventDefault();
+        var that = this;
+        if(typeof e.targetTouches !== 'undefined'){
+            for(var i = 0; i < e.targetTouches.length; i++){
+                chains.forEach(function(chain){
+                    if(e.targetTouches[i].target == chain.element){
+                        chain.move(e.targetTouches[i]);
+                        checkCondition.apply(that);
+                    }
+                });
+            }
+        }
+    }
+
+    function checkCondition() {
+        var isOpened = true;
+        chains.forEach(function(c) {
+            if (c.element.offsetHeight !== c.maxOffset) {
+                isOpened = false;
+            }
+        });
+
+        if(isOpened){
+            this.unlock();
+        }
+    }
+    
+
     // ==== Напишите свой код для открытия второй двери здесь ====
     // Для примера дверь откроется просто по клику на неё
-    this.popup.addEventListener('click', function() {
-        this.unlock();
-    }.bind(this));
     // ==== END Напишите свой код для открытия второй двери здесь ====
 }
 Door1.prototype = Object.create(DoorBase.prototype);
