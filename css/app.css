@@ -191,23 +191,27 @@ body {
 
 .chain-riddle {
     position: relative;
+    touch-action: none;
 }
 
 .chain {
-    width: 40px;
-    height: 190px;
-    background: url(../img/chain.png) center top repeat-y;
+    width: 128px;
+    min-height: 30px;
+    max-height: 300px;
+    transition: min-height 0.03s ease-in;
+    background: url(../img/chain.png) center bottom repeat-y;
     position: absolute;
     top: 28px;
-    left: 13px;
+    left: -31px;
 }
 
-.chain__head {
+.chain:after {
+    content: "";
     display: block;
     width: 128px;
     height: 37px;
     background: url(../img/bridgeB.png) center top no-repeat;
     position: absolute;
     bottom: -37px;
-    left: -43px;
+    left: 0;
 }
