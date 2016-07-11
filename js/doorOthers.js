@@ -66,6 +66,9 @@ Door0.prototype.constructor = DoorBase;
 
 function Door1(number, onUnlock) {
     DoorBase.apply(this, arguments);
+    this.popup.addEventListener('click', function() {
+        this.unlock();
+    }.bind(this));
 
     var chains = [
         new ChainRiddle(this.popup.querySelector('.chain_0')),
@@ -73,7 +76,7 @@ function Door1(number, onUnlock) {
     ];
 
     chains.forEach(function(c){
-        c.element.addEventListener('pointermove', _onChainPointerMove.bind(this));
+        // c.element.addEventListener('pointermove', _onChainPointerMove.bind(this));
         // c.element.addEventListener('pointerup', _onChainPointerUp.bind(this));
 
         c.element.addEventListener('touchend', _onChainTouchUp.bind(this));
@@ -107,7 +110,6 @@ function Door1(number, onUnlock) {
     }
 
     function _onChainPointerMove(e) {
-        e.preventDefault();
         var that = this;
         if(typeof e.targetTouches !== 'undefined' && e.targetTouches.length > 0){
             for(var i = 0; i < e.targetTouches.length; i++){
@@ -151,6 +153,47 @@ Door1.prototype.constructor = DoorBase;
  */
 function Door2(number, onUnlock) {
     DoorBase.apply(this, arguments);
+
+    var pX, pY, kX = 0, kY = 0;
+    var keys = [
+        this.popup.querySelector('.key_0')
+    ];
+
+    keys.forEach(function(k){
+        k.addEventListener('pointerdown', _onKeyPointerDown.bind(this));
+        k.addEventListener('pointerup', _onKeyPointerUp.bind(this));
+        k.addEventListener('pointerleave', _onKeyPointerUp.bind(this));
+        k.addEventListener('pointercancel', _onKeyPointerUp.bind(this));
+        this.popup.addEventListener('pointermove', _onKeyPointerMove.bind(this));
+    }.bind(this));
+
+    function _onKeyPointerDown(e){
+        pX = e.pageX - kX;
+        pY = e.pageY - kY;
+    }
+
+    function _onKeyPointerUp(e){
+        kX = e.pageX - pX;
+        kY = e.pageY - pY;
+        checkCondition.apply(this);
+    }
+
+    function _onKeyPointerMove(e){
+        keys[0].style.transform = 'translate3d(' + (e.pageX - pX) + 'px, ' + (e.pageY - pY) + 'px, 0)';
+    }
+
+    function checkCondition(){
+        var isOpened = true;
+        keys.forEach(function(k) {
+            if (!doElsCollide(k, document.querySelector('.lock_0'), 1, 0.3)) {
+                isOpened = false;
+            }
+        });
+
+        if (isOpened) {
+            this.unlock();
+        }
+    }
 
     // ==== Напишите свой код для открытия третей двери здесь ====
     // Для примера дверь откроется просто по клику на неё
