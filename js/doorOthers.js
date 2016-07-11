@@ -74,16 +74,46 @@ function Door1(number, onUnlock) {
 
     chains.forEach(function(c){
         c.element.addEventListener('pointermove', _onChainPointerMove.bind(this));
+        // c.element.addEventListener('pointerup', _onChainPointerUp.bind(this));
+
+        c.element.addEventListener('touchend', _onChainTouchUp.bind(this));
         c.element.addEventListener('touchmove', _onChainPointerMove.bind(this));
     }.bind(this));
+
+    function _onChainTouchUp(e) {
+        var chainsToReset = [];
+        chains.forEach(function(chain, i) {
+            chainsToReset[i] = true;
+        });
+
+        if(typeof e.touches !== 'undefined' && e.touches.length > 0){
+            [].forEach.call(e.touches, function(touch){
+                chainsToReset.forEach(function(chainStatus, chainId){
+                    if(touch.target == chains[chainId].element){
+                        chainsToReset[chainId] = false;
+                    }
+                })
+            })
+        }
+
+        chainsToReset.forEach(function(chainStatus, chainId){
+            if(chainStatus){
+                chains[chainId].element.classList.remove('chain_pressed');
+                if(chains[chainId].element.style.minHeight !== chains[chainId].maxOffset + 'px'){
+                    chains[chainId].element.style.minHeight = chains[chainId].minOffset + 'px';
+                }
+            }
+        });
+    }
 
     function _onChainPointerMove(e) {
         e.preventDefault();
         var that = this;
-        if(typeof e.targetTouches !== 'undefined'){
+        if(typeof e.targetTouches !== 'undefined' && e.targetTouches.length > 0){
             for(var i = 0; i < e.targetTouches.length; i++){
                 chains.forEach(function(chain){
                     if(e.targetTouches[i].target == chain.element){
+                        chain.element.classList.add('chain_pressed');
                         chain.move(e.targetTouches[i]);
                         checkCondition.apply(that);
                     }

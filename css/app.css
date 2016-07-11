@@ -191,18 +191,17 @@ body {
 
 .chain-riddle {
     position: relative;
-    touch-action: none;
 }
 
 .chain {
     width: 128px;
     min-height: 30px;
     max-height: 300px;
-    transition: min-height 0.03s ease-in;
     background: url(../img/chain.png) center bottom repeat-y;
     position: absolute;
     top: 28px;
     left: -31px;
+    transition: min-height 3s ease-in;
 }
 
 .chain:after {
@@ -214,4 +213,8 @@ body {
     position: absolute;
     bottom: -37px;
     left: 0;
+}
+
+.chain_pressed {
+    transition: min-height linear;
 }
