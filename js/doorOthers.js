@@ -67,9 +67,6 @@ Door0.prototype.constructor = DoorBase;
 function Door1(number, onUnlock) {
     // ==== Напишите свой код для открытия второй двери здесь ====
     DoorBase.apply(this, arguments);
-    this.popup.addEventListener('click', function() {
-        this.unlock();
-    }.bind(this));
 
     var chains = [
         new ChainRiddle(this.popup.querySelector('.chain_0')),
@@ -98,9 +95,7 @@ function Door1(number, onUnlock) {
         chains.some(function(c) {
             if(c.element == e.target){
                 c.element.classList.remove('chain_pressed');
-                if(c.element.style.minHeight !== c.maxOffset + 'px'){
-                    c.element.style.minHeight = c.minOffset + 'px';
-                }
+                c.element.style.minHeight = c.minOffset + 'px';
                 return true;
             }
         });
