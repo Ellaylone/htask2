@@ -168,6 +168,7 @@ body {
     align-items: center;
     justify-content: space-around;
     height: 100%;
+    width: 100%;
 }
 
 .door-riddle_column {
@@ -177,6 +178,10 @@ body {
 
 .door-riddle_50percent {
     height: 50%;
+}
+
+.door-riddle_padded {
+    padding-top: 150px;
 }
 
 .door-riddle__button {
@@ -215,15 +220,30 @@ body {
     transition: min-height 3s ease-in;
 }
 
+.chain_weight {
+    min-height: 200px;
+}
+
 .chain:after {
     content: "";
     display: block;
     width: 128px;
     height: 37px;
     background: url(../img/bridgeB.png) center top no-repeat;
+    background-size: 60%;
     position: absolute;
     bottom: -37px;
     left: 0;
+}
+
+.chain_weight:after {
+    background: url(../img/weightAttached.png) no-repeat;
+    background-size: 64px;
+    width: 64px;
+    height: 64px;
+    bottom: -60px;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
 .chain_pressed {
@@ -233,11 +253,7 @@ body {
 /* NOTE lock for door2 */
 
 .lock-riddle {
-    width: 230px;
-    height: 230px;
-    border-radius: 50%;
-    background-color: #000000;
-    border: 1px solid #F3E9E0;
+    position: relative;
 }
 
 .lock-riddle__shield {
@@ -285,8 +301,30 @@ body {
 .key {
     width: 90px;
     height: 80px;
+    transition: display linear;
 }
 
 .key_yellow {
     background: url(../img/keyYellow.png) center center no-repeat;
+}
+
+.brick {
+    position: absolute;
+    height: 128px;
+    width: 128px;
+    background: url(../img/brickGrey.png) center center no-repeat;
+    transition: transform 3s ease-in;
+}
+
+.brick_pressed {
+    transition: transform linear;
+}
+
+.brick:before {
+    width: 128px;
+    height: 400px;
+    content: "";
+    background: url(../img/chain.png) center center repeat-y;
+    position: absolute;
+    top: -400px;
 }

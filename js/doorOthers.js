@@ -65,6 +65,7 @@ Door0.prototype.constructor = DoorBase;
  */
 
 function Door1(number, onUnlock) {
+    // ==== Напишите свой код для открытия второй двери здесь ====
     DoorBase.apply(this, arguments);
     this.popup.addEventListener('click', function() {
         this.unlock();
@@ -76,52 +77,43 @@ function Door1(number, onUnlock) {
     ];
 
     chains.forEach(function(c){
-        // c.element.addEventListener('pointermove', _onChainPointerMove.bind(this));
-        // c.element.addEventListener('pointerup', _onChainPointerUp.bind(this));
-
-        c.element.addEventListener('touchend', _onChainTouchUp.bind(this));
-        c.element.addEventListener('touchmove', _onChainPointerMove.bind(this));
+        c.element.addEventListener('pointerdown', _onChainPointerDown.bind(this), false);
+        c.element.addEventListener('pointerup', _onChainPointerUp.bind(this), false);
+        c.element.addEventListener('pointercancel', _onChainPointerUp.bind(this), false);
+        this.popup.addEventListener('pointermove', _onChainPointerMove.bind(this), false);
     }.bind(this));
 
-    function _onChainTouchUp(e) {
-        var chainsToReset = [];
-        chains.forEach(function(chain, i) {
-            chainsToReset[i] = true;
+    function _onChainPointerDown(e) {
+        var elFromPoint = document.elementsFromPoint(e.pageX, e.pageY);
+        chains.some(function(c){
+            if(elFromPoint.indexOf(c.element) >= 0) {
+                c.element.setPointerCapture(e.pointerId);
+                c.element.classList.add('chain_pressed');
+                return true;
+            }
         });
+    }
 
-        if(typeof e.touches !== 'undefined' && e.touches.length > 0){
-            [].forEach.call(e.touches, function(touch){
-                chainsToReset.forEach(function(chainStatus, chainId){
-                    if(touch.target == chains[chainId].element){
-                        chainsToReset[chainId] = false;
-                    }
-                })
-            })
-        }
-
-        chainsToReset.forEach(function(chainStatus, chainId){
-            if(chainStatus){
-                chains[chainId].element.classList.remove('chain_pressed');
-                if(chains[chainId].element.style.minHeight !== chains[chainId].maxOffset + 'px'){
-                    chains[chainId].element.style.minHeight = chains[chainId].minOffset + 'px';
+    function _onChainPointerUp(e) {
+        chains.some(function(c) {
+            if(c.element == e.target){
+                c.element.classList.remove('chain_pressed');
+                if(c.element.style.minHeight !== c.maxOffset + 'px'){
+                    c.element.style.minHeight = c.minOffset + 'px';
                 }
+                return true;
             }
         });
     }
 
     function _onChainPointerMove(e) {
         var that = this;
-        if(typeof e.targetTouches !== 'undefined' && e.targetTouches.length > 0){
-            for(var i = 0; i < e.targetTouches.length; i++){
-                chains.forEach(function(chain){
-                    if(e.targetTouches[i].target == chain.element){
-                        chain.element.classList.add('chain_pressed');
-                        chain.move(e.targetTouches[i]);
-                        checkCondition.apply(that);
-                    }
-                });
+        chains.forEach(function(chain){
+            if(e.target == chain.element){
+                chain.move(e);
+                checkCondition.apply(that);
             }
-        }
+        });
     }
 
     function checkCondition() {
@@ -136,10 +128,6 @@ function Door1(number, onUnlock) {
             this.unlock();
         }
     }
-    
-
-    // ==== Напишите свой код для открытия второй двери здесь ====
-    // Для примера дверь откроется просто по клику на неё
     // ==== END Напишите свой код для открытия второй двери здесь ====
 }
 Door1.prototype = Object.create(DoorBase.prototype);
@@ -153,6 +141,7 @@ Door1.prototype.constructor = DoorBase;
  */
 function Door2(number, onUnlock) {
     DoorBase.apply(this, arguments);
+    var offsetLimit = 200;
 
     var pX, pY, kX = 0, kY = 0;
     var keys = [
@@ -160,14 +149,83 @@ function Door2(number, onUnlock) {
     ];
 
     keys.forEach(function(k){
-        k.addEventListener('pointerdown', _onKeyPointerDown.bind(this));
-        k.addEventListener('pointerup', _onKeyPointerUp.bind(this));
-        k.addEventListener('pointerleave', _onKeyPointerUp.bind(this));
-        k.addEventListener('pointercancel', _onKeyPointerUp.bind(this));
-        this.popup.addEventListener('pointermove', _onKeyPointerMove.bind(this));
+        k.addEventListener('pointerdown', _onKeyPointerDown.bind(this), false);
+        k.addEventListener('pointerup', _onKeyPointerUp.bind(this), false);
+        k.addEventListener('pointercancel', _onKeyPointerUp.bind(this), false);
+        this.popup.addEventListener('pointermove', _onKeyPointerMove.bind(this), false);
     }.bind(this));
 
+    var chains = [
+        new ChainRiddle(this.popup.querySelector('.chain_0'))
+    ];
+
+    chains.forEach(function(c) {
+        c.maxOffset = offsetLimit;
+        c.element.addEventListener('pointerdown', _onChainPointerDown.bind(this), false);
+        c.element.addEventListener('pointerup', _onChainPointerUp.bind(this), false);
+        c.element.addEventListener('pointercancel', _onChainPointerUp.bind(this), false);
+        this.popup.addEventListener('pointermove', _onChainPointerMove.bind(this), false);
+    }.bind(this));
+
+    var counters = [
+        this.popup.querySelector('.chain_1')
+    ];
+
+    var bricks = [
+        this.popup.querySelector('.brick_0')
+    ];
+
+    var locks = [
+        this.popup.querySelector('.lock_0')
+    ];
+
+    function _onChainPointerDown(e) {
+        var elFromPoint = document.elementsFromPoint(e.pageX, e.pageY);
+        chains.some(function(c){
+            if(elFromPoint.indexOf(c.element) >= 0) {
+                c.element.setPointerCapture(e.pointerId);
+                c.element.classList.add('chain_pressed');
+                counters[0].classList.add('chain_pressed');
+                bricks[0].classList.add('brick_pressed');
+                return true;
+            }
+        });
+    }
+
+    function _onChainPointerUp(e) {
+        chains.some(function(c) {
+            if(c.element == e.target){
+                c.element.classList.remove('chain_pressed');
+                c.element.style.minHeight = c.minOffset + 'px';
+                counters[0].classList.remove('chain_pressed');
+                counters[0].style.minHeight = offsetLimit + 'px';
+                bricks[0].classList.remove('brick_pressed');
+                bricks[0].style.transform = 'translate3d(0px, 0px, 0)';
+                return true;
+            }
+        });
+    }
+
+    function _onChainPointerMove(e) {
+        var that = this;
+        chains.some(function(c){
+            if(e.target == c.element){
+                c.move(e);
+                counters[0].style.minHeight = (offsetLimit - c.moveOffset) + 'px';
+                bricks[0].style.transform = 'translate3d(0px, -' + (c.moveOffset - c.minOffset) + 'px, 0)';
+                return true;
+            }
+        });
+    }
+
     function _onKeyPointerDown(e){
+        var elFromPoint = document.elementsFromPoint(e.pageX, e.pageY);
+        keys.some(function(k){
+            if(elFromPoint.indexOf(k.element) >= 0) {
+                k.element.setPointerCapture(e.pointerId);
+                return true;
+            }
+        });
         pX = e.pageX - kX;
         pY = e.pageY - kY;
     }
@@ -179,14 +237,20 @@ function Door2(number, onUnlock) {
     }
 
     function _onKeyPointerMove(e){
-        keys[0].style.transform = 'translate3d(' + (e.pageX - pX) + 'px, ' + (e.pageY - pY) + 'px, 0)';
+        keys.some(function(k){
+            if(e.target == k){
+                k.style.transform = 'translate3d(' + (e.pageX - pX) + 'px, ' + (e.pageY - pY) + 'px, 0)';
+            }
+        })
     }
 
     function checkCondition(){
         var isOpened = true;
         keys.forEach(function(k) {
-            if (!doElsCollide(k, document.querySelector('.lock_0'), 1, 0.3)) {
+            if (!doElsCollide(k, locks[0], 1, 0.5) || doElsCollide(bricks[0], locks[0], 1, 0.5)) {
                 isOpened = false;
+            } else {
+                k.style.display = 'none';
             }
         });
 
