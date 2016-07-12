@@ -168,6 +168,20 @@ body {
     align-items: center;
     justify-content: space-around;
     height: 100%;
+    width: 100%;
+}
+
+.door-riddle_column {
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.door-riddle_50percent {
+    height: 50%;
+}
+
+.door-riddle_padded {
+    padding-top: 150px;
 }
 
 .door-riddle__button {
@@ -189,20 +203,25 @@ body {
     background-color: #F3E5D9;
 }
 
+/* NOTE chains for door1 */
+
 .chain-riddle {
     position: relative;
-    touch-action: none;
 }
 
 .chain {
     width: 128px;
     min-height: 30px;
     max-height: 300px;
-    transition: min-height 0.03s ease-in;
     background: url(../img/chain.png) center bottom repeat-y;
     position: absolute;
     top: 28px;
     left: -31px;
+    transition: min-height 3s ease-in;
+}
+
+.chain_weight {
+    min-height: 200px;
 }
 
 .chain:after {
@@ -211,7 +230,101 @@ body {
     width: 128px;
     height: 37px;
     background: url(../img/bridgeB.png) center top no-repeat;
+    background-size: 60%;
     position: absolute;
     bottom: -37px;
     left: 0;
+}
+
+.chain_weight:after {
+    background: url(../img/weightAttached.png) no-repeat;
+    background-size: 64px;
+    width: 64px;
+    height: 64px;
+    bottom: -60px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.chain_pressed {
+    transition: min-height linear;
+}
+
+/* NOTE lock for door2 */
+
+.lock-riddle {
+    position: relative;
+}
+
+.lock-riddle__shield {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #4679BD;
+    box-shadow: 0 0 3px gray;
+    border:10px solid #CFDCEC;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.lock-riddle__shield:before, .lock-riddle__shield:after {
+    content: "";
+    width: 100px;
+    height: 40px;
+    background-color: #969696;
+    position: absolute;
+}
+
+.lock-riddle__shield:before {
+    left: -50%;
+    top: 50%;
+    transform: translate(50%, -50%);
+    box-shadow: inset -1px 1px 4px rgba(0,0,0,0.6);
+}
+
+.lock-riddle__shield:after {
+    right: -50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 1px 1px 4px rgba(0,0,0,0.6);
+}
+
+.lock {
+    width: 128px;
+    height: 128px;
+}
+
+.lock_yellow {
+    background: url(../img/lockYellow.png) center center no-repeat;
+}
+
+.key {
+    width: 90px;
+    height: 80px;
+    transition: display linear;
+}
+
+.key_yellow {
+    background: url(../img/keyYellow.png) center center no-repeat;
+}
+
+.brick {
+    position: absolute;
+    height: 128px;
+    width: 128px;
+    background: url(../img/brickGrey.png) center center no-repeat;
+    transition: transform 3s ease-in;
+}
+
+.brick_pressed {
+    transition: transform linear;
+}
+
+.brick:before {
+    width: 128px;
+    height: 400px;
+    content: "";
+    background: url(../img/chain.png) center center repeat-y;
+    position: absolute;
+    top: -400px;
 }
