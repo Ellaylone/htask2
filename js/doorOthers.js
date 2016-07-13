@@ -8,9 +8,6 @@
 function Door0(number, onUnlock) {
 
     DoorBase.apply(this, arguments);
-    this.popup.addEventListener('click', function() {
-        this.unlock();
-    }.bind(this));
 
     var buttons = [
         this.popup.querySelector('.door-riddle__button_0'),
