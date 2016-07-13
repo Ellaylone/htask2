@@ -46,11 +46,13 @@ DoorBase.prototype = {
      * дверь считается открытой
      */
     unlock: function() {
-        this.door.classList.remove('door_locked');
-        this.isLocked = false;
-        this.closePopup();
-        this.onUnclockCallback();
-        this.showCongratulations();
+        if(this.isLocked){
+            this.door.classList.remove('door_locked');
+            this.isLocked = false;
+            this.closePopup();
+            this.onUnclockCallback();
+            this.showCongratulations();
+        }
     },
     showCongratulations: function() {
         alert('Дверь ' + this.number + ' открыта!')

@@ -35,7 +35,7 @@ function App(el) {
 }
 
 //NOTE check if elements collide
-doElsCollide = function(el1, el2, c1, c2) {
+function doElsCollide(el1, el2, c1, c2) {
     var bodyRect = document.body.getBoundingClientRect();
     var elemRect1 = el1.getBoundingClientRect();
     var elemRect2 = el2.getBoundingClientRect();
@@ -47,7 +47,7 @@ doElsCollide = function(el1, el2, c1, c2) {
     return !((el1.offsetBottom < elemRect2.top - bodyRect.top) ||
              (elemRect1.top - bodyRect.top > el2.offsetBottom) ||
              (el1.offsetRight < elemRect2.left - bodyRect.left) ||
-             (elemRect1.left - bodyRect.left > el2.offsetRight))
+             (elemRect1.left - bodyRect.left > el2.offsetRight));
 };
 
 // Start the app
