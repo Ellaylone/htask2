@@ -77,8 +77,9 @@ function Door1(number, onUnlock) {
         c.element.addEventListener('pointerdown', _onChainPointerDown.bind(this), false);
         c.element.addEventListener('pointerup', _onChainPointerUp.bind(this), false);
         c.element.addEventListener('pointercancel', _onChainPointerUp.bind(this), false);
-        this.popup.addEventListener('pointermove', _onChainPointerMove.bind(this), false);
     }.bind(this));
+
+    this.popup.addEventListener('pointermove', _onChainPointerMove.bind(this), false);
 
     function _onChainPointerDown(e) {
         var elFromPoint = document.elementsFromPoint(e.pageX, e.pageY);
@@ -147,7 +148,6 @@ function Door2(number, onUnlock) {
         k.addEventListener('pointerdown', _onKeyPointerDown.bind(this), false);
         k.addEventListener('pointerup', _onKeyPointerUp.bind(this), false);
         k.addEventListener('pointercancel', _onKeyPointerUp.bind(this), false);
-        this.popup.addEventListener('pointermove', _onKeyPointerMove.bind(this), false);
     }.bind(this));
 
     var chains = [
@@ -159,8 +159,9 @@ function Door2(number, onUnlock) {
         c.element.addEventListener('pointerdown', _onChainPointerDown.bind(this), false);
         c.element.addEventListener('pointerup', _onChainPointerUp.bind(this), false);
         c.element.addEventListener('pointercancel', _onChainPointerUp.bind(this), false);
-        this.popup.addEventListener('pointermove', _onChainPointerMove.bind(this), false);
     }.bind(this));
+
+    this.popup.addEventListener('pointermove', _onPointerMove.bind(this), false);
 
     var counters = [
         this.popup.querySelector('.chain_1')
@@ -201,23 +202,33 @@ function Door2(number, onUnlock) {
         });
     }
 
-    function _onChainPointerMove(e) {
+    function _onPointerMove(e) {
+        // console.log(e);
         var that = this;
         chains.some(function(c){
             if(e.target == c.element){
+                // console.log('chain', e.target);
                 c.move(e);
                 counters[0].style.minHeight = (offsetLimit - c.moveOffset) + 'px';
                 bricks[0].style.transform = 'translate3d(0px, -' + (c.moveOffset - c.minOffset) + 'px, 0)';
                 return true;
             }
-        });
+        })
+        keys.some(function(k){
+            if(e.target == k){
+                // console.log('key', e.target);
+                k.style.transform = 'translate3d(' + (e.pageX - pX) + 'px, ' + (e.pageY - pY) + 'px, 0)';
+                return true;
+            }
+        })
     }
 
     function _onKeyPointerDown(e){
         var elFromPoint = document.elementsFromPoint(e.pageX, e.pageY);
         keys.some(function(k){
-            if(elFromPoint.indexOf(k.element) >= 0) {
-                k.element.setPointerCapture(e.pointerId);
+            if(elFromPoint.indexOf(k) >= 0) {
+                k.setPointerCapture(e.pointerId);
+                console.log('down', k);
                 return true;
             }
         });
@@ -229,14 +240,6 @@ function Door2(number, onUnlock) {
         kX = e.pageX - pX;
         kY = e.pageY - pY;
         checkCondition.apply(this);
-    }
-
-    function _onKeyPointerMove(e){
-        keys.some(function(k){
-            if(e.target == k){
-                k.style.transform = 'translate3d(' + (e.pageX - pX) + 'px, ' + (e.pageY - pY) + 'px, 0)';
-            }
-        })
     }
 
     function checkCondition(){
@@ -275,10 +278,13 @@ function Box(number, onUnlock) {
     DoorBase.apply(this, arguments);
 
     // ==== Напишите свой код для открытия сундука здесь ====
-    // Для примера сундук откроется просто по клику на него
-    this.popup.addEventListener('click', function() {
-        this.unlock();
-    }.bind(this));
+    var locks = [
+        this.popup.querySelector('.lock_0')
+    ];
+
+    var keys = [
+        this.popup.querySelector('.key_0')
+    ];
     // ==== END Напишите свой код для открытия сундука здесь ====
 
     this.showCongratulations = function() {
