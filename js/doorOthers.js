@@ -8,9 +8,6 @@
 function Door0(number, onUnlock) {
 
     DoorBase.apply(this, arguments);
-    this.popup.addEventListener('click', function() {
-        this.unlock();
-    }.bind(this));
 
     var buttons = [
         this.popup.querySelector('.door-riddle__button_0'),
@@ -157,40 +154,36 @@ function Door2(number, onUnlock) {
 
     var lock = this.popup.querySelector('.lock_0');
 
-    this.popup.addEventListener('pointermove', _onPointerMove.bind(this), false);
-
+    //NOTE Мой телефон в этом попапе упорно отказывается
+    // выстреливать второе событие pointerdown,
+    // найти причину мне не удалось -
+    // поэтому сделал на touchevents 
     keys.forEach(function(k){
-        k.addEventListener('pointerdown', _onKeyPointerDown.bind(this), false);
-        k.addEventListener('pointerup', _onKeyPointerUp.bind(this), false);
-        k.addEventListener('pointercancel', _onKeyPointerUp.bind(this), false);
+        k.addEventListener('touchstart', _onKeyTouchDown.bind(this), false);
+        k.addEventListener('touchend', _onKeyTouchUp.bind(this), false);
+        k.addEventListener('touchcancel', _onKeyTouchUp.bind(this), false);
+        k.addEventListener('touchmove', _onTouchMove.bind(this), false);
     }.bind(this));
 
     chains.forEach(function(c) {
         c.maxOffset = offsetLimit;
-        c.element.addEventListener('pointerdown', _onChainPointerDown.bind(this), false);
-        c.element.addEventListener('pointerup', _onChainPointerUp.bind(this), false);
-        c.element.addEventListener('pointercancel', _onChainPointerUp.bind(this), false);
+        c.element.addEventListener('touchstart', _onChainTouchDown.bind(this), false);
+        c.element.addEventListener('touchend', _onChainTouchUp.bind(this), false);
+        c.element.addEventListener('touchcancel', _onChainTouchUp.bind(this), false);
+        c.element.addEventListener('touchmove', _onTouchMove.bind(this), false);
     }.bind(this));
 
-    function _onChainPointerDown(e) {
-        var elFromPoint = document.elementsFromPoint(e.pageX, e.pageY);
-        chains.some(function(c){
-            if(elFromPoint.indexOf(c.element) >= 0) {
-                c.element.setPointerCapture(e.pointerId);
-
-                c.element.classList.add('chain_pressed');
-                counter.classList.add('chain_pressed');
-                brick.classList.add('brick_pressed');
-                return true;
-            }
-        });
+    function _onChainTouchDown(e) {
+        e.target.classList.add('chain_pressed');
+        counter.classList.add('chain_pressed');
+        brick.classList.add('brick_pressed');
     }
 
-    function _onChainPointerUp(e) {
-        chains.some(function(c) {
+    function _onChainTouchUp(e) {
+        chains.some(function(c){
             if(c.element == e.target){
-                c.element.classList.remove('chain_pressed');
-                c.element.style.minHeight = c.minOffset + 'px';
+                e.target.classList.remove('chain_pressed');
+                e.target.style.minHeight = c.minOffset + 'px';
 
                 counter.classList.remove('chain_pressed');
                 counter.style.minHeight = offsetLimit + 'px';
@@ -202,44 +195,48 @@ function Door2(number, onUnlock) {
         });
     }
 
-    function _onPointerMove(e) {
+    function _onTouchMove(e) {
         var that = this;
-        chains.some(function(c){
-            if(e.target == c.element){
-                c.move(e);
-                requestAnimationFrame(function(){
-                    counter.style.minHeight = (offsetLimit - c.moveOffset) + 'px';
-                    brick.style.transform = 'translate3d(0px, -' + (c.moveOffset - c.minOffset) + 'px, 0)';
+        if(typeof e.touches != 'undefined' && e.touches.length > 0){
+            [].forEach.call(e.touches, function(touch){
+                chains.some(function(c){
+                    if(touch.target == c.element){
+                        c.move(touch);
+                        requestAnimationFrame(function(){
+                            counter.style.minHeight = (offsetLimit - c.moveOffset) + 'px';
+                            brick.style.transform = 'translate3d(0px, -' + (c.moveOffset - c.minOffset) + 'px, 0)';
+                        });
+                        return true;
+                    }
                 });
-                return true;
-            }
-        })
-        keys.some(function(k){
-            if(e.target == k){
-                requestAnimationFrame(function(){
-                    k.style.transform = 'translate3d(' + (e.pageX - pX) + 'px, ' + (e.pageY - pY) + 'px, 0)';
+                keys.some(function(k){
+                    if(touch.target == k){
+                        k.style.transform = 'translate3d(' + (touch.pageX - pX) + 'px, ' + (touch.pageY - pY) + 'px, 0)';
+                        return true;
+                    }
                 });
-                return true;
-            }
-        })
+            });
+        }
+        
     }
 
-    function _onKeyPointerDown(e){
-        var elFromPoint = document.elementsFromPoint(e.pageX, e.pageY);
-        keys.some(function(k){
-            if(elFromPoint.indexOf(k) >= 0) {
-                k.setPointerCapture(e.pointerId);
-                return true;
-            }
+    function _onKeyTouchDown(e){
+        [].forEach.call(e.touches, function(touch){
+            keys.some(function(k){
+                if(touch.target == k) {
+                    pX = touch.pageX - kX;
+                    pY = touch.pageY - kY;
+                    return true;
+                }
+            });
         });
-        pX = e.pageX - kX;
-        pY = e.pageY - kY;
     }
 
-    function _onKeyPointerUp(e){
-        kX = e.pageX - pX;
-        kY = e.pageY - pY;
+    function _onKeyTouchUp(e){
         checkCondition.apply(this);
+        kX = pX = 0;
+        kY = pY = 0;
+        keys[0].style.transform = 'translate3d(0, 0, 0)';
     }
 
     function checkCondition(){
