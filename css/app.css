@@ -143,6 +143,7 @@ body {
     right: 16px;
     font-size: 24px;
     color: #fff;
+    z-index: 99;
 
     cursor: pointer;
 }
@@ -169,6 +170,8 @@ body {
     justify-content: space-around;
     height: 100%;
     width: 100%;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .door-riddle_column {
@@ -298,6 +301,22 @@ body {
     background: url(../img/lockYellow.png) center center no-repeat;
 }
 
+.lock_center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.lock_blocked:after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    background: rgba(128, 128, 128, 0.5);
+    position: absolute;
+    border-radius: 12px;
+}
+
 .key {
     width: 90px;
     height: 80px;
@@ -327,4 +346,8 @@ body {
     background: url(../img/chain.png) center center repeat-y;
     position: absolute;
     top: -400px;
+}
+
+.hidden {
+    display: none;
 }
